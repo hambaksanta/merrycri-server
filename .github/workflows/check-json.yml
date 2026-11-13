@@ -1,0 +1,20 @@
+# PR 을 올리면 규칙·예시 데이터 JSON 이 깨지지 않았는지 자동으로 확인한다.
+name: JSON 확인
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  json:
+    name: json-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JSON 문법 확인
+        run: |
+          for f in database.rules.json firebase.json seed/seed.json; do
+            python3 -m json.tool "$f" > /dev/null && echo "OK  $f"
+          done

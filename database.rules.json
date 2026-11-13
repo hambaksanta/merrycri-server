@@ -1,0 +1,104 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "users": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['nick', 'outfit'])",
+        "nick": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 10" }
+      }
+    },
+
+    "rooms": {
+      "$spaceId": {
+        ".validate": "$spaceId.matches(/^(wardrobe|plaza|tree|post|lounge|snowman|snowball|sled)$/)",
+        "presence": {
+          ".read": "auth != null",
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid",
+            "nick": { ".validate": "newData.isString() && newData.val().length <= 10" },
+            "x":  { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1" },
+            "y":  { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1" },
+            "tx": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1" },
+            "ty": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1" },
+            "moveStartAt": { ".validate": "newData.isNumber() && newData.val() <= now" },
+            "holding": { ".validate": "newData.isString() && newData.val().matches(/^(cocoa|latte|americano|gingerbread|chocolate|marshmallow)$/)" },
+            "bites": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+            "roasted": { ".validate": "newData.isBoolean()" },
+            "updatedAt": { ".validate": "newData.val() === now" }
+          }
+        }
+      }
+    },
+
+    "events": {
+      "snowstorm": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".validate": "newData.child('by').val() === auth.uid && newData.child('at').val() === now"
+      }
+    },
+
+    "tree": {
+      "ornaments": {
+        ".read": "auth != null",
+        "$id": {
+          ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid",
+          ".validate": "newData.hasChildren(['type', 'x', 'y', 'uid', 'nick', 'createdAt'])",
+          "createdAt": { ".validate": "newData.val() === now" }
+        }
+      }
+    },
+
+    "gifts": {
+      ".read": "auth != null",
+      ".indexOn": ["to", "fromUid"],
+      "$giftId": {
+        ".write": "auth != null && ((!data.exists() && newData.child('fromUid').val() === auth.uid) || (data.exists() && newData.exists() && !data.child('openedBy').exists() && (data.child('to').val() === auth.uid || data.child('to').val() === 'anyone') && now >= 1798124400000 && now < 1798729200000))",
+        ".validate": "newData.hasChildren(['fromUid', 'fromNick', 'to', 'letter', 'createdAt'])",
+        "fromUid": { ".validate": "!data.exists() || newData.val() === data.val()" },
+        "to": { ".validate": "!data.exists() || newData.val() === data.val()" },
+        "letter": { ".validate": "newData.isString() && newData.val().length <= 500 && (!data.exists() || newData.val() === data.val())" },
+        "createdAt": { ".validate": "!data.exists() ? newData.val() === now : newData.val() === data.val()" },
+        "openedBy": { ".validate": "newData.val() === auth.uid" },
+        "openedAt": { ".validate": "newData.isNumber() && newData.val() >= now - 60000 && newData.val() <= now + 10000" }
+      }
+    },
+
+    "demo": {
+      "gifts": {
+        ".read": "auth != null",
+        ".indexOn": ["to"],
+        "$giftId": {
+          ".write": "auth != null && ((!data.exists() && newData.child('fromUid').val() === auth.uid) || (data.exists() && newData.exists()))",
+          "fromUid": { ".validate": "!data.exists() || newData.val() === data.val()" },
+          "to": { ".validate": "!data.exists() || newData.val() === data.val()" },
+          "letter": { ".validate": "newData.isString() && newData.val().length <= 500 && (!data.exists() || newData.val() === data.val())" },
+          "openedBy": { ".validate": "newData.val() === auth.uid" }
+        }
+      }
+    },
+
+    "lounge": {
+      "fire": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['level', 'lastFedAt'])",
+        "level": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 3" },
+        "lastFedAt": { ".validate": "newData.isNumber() && newData.val() >= now - 60000 && newData.val() <= now + 10000" }
+      }
+    },
+
+    "snowmen": {
+      ".read": "auth != null",
+      ".indexOn": ["uid"],
+      "$id": {
+        ".write": "auth != null && (data.exists() ? data.child('uid').val() === auth.uid : newData.child('uid').val() === auth.uid)",
+        "uid": { ".validate": "!data.exists() || newData.val() === data.val()" }
+      }
+    }
+  }
+}

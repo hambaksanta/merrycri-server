@@ -1,0 +1,30 @@
+name: 작업 (DESIGN · ASSET · DOCS · CHORE)
+description: 이미지·음원 넣기, 문서, 설정 등 기능이 아닌 작업
+title: "CHORE: "
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: 종류
+      options:
+        - DESIGN · 화면 배치·색·폰트
+        - ASSET · 이미지·음원 추가
+        - DOCS · 문서
+        - CHORE · 빌드·설정·의존성
+        - REFACTOR · 동작은 그대로 두고 코드 정리
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: 할 일
+      placeholder: |
+        - [ ] BGM 8곡 res/raw/bgm_01.ogg ~ bgm_08.ogg
+        - [ ] README 출처 표 채우기
+    validations:
+      required: true
+  - type: textarea
+    id: license
+    attributes:
+      label: 출처·라이선스 (이미지·음원일 때)
+      placeholder: "bgm_01.ogg · Kevin MacLeod 'Jingle Bells' · CC BY 4.0 · 링크"

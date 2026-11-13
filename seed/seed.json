@@ -1,0 +1,128 @@
+{
+  "tree/ornaments/seed-orn-01": {
+    "type": "ball_red",
+    "x": 0.42,
+    "y": 0.3,
+    "uid": "seed",
+    "nick": "함박산타",
+    "createdAt": 1794495600000
+  },
+  "tree/ornaments/seed-orn-02": {
+    "type": "ball_gold",
+    "x": 0.58,
+    "y": 0.36,
+    "uid": "seed",
+    "nick": "함박산타",
+    "createdAt": 1794495600000
+  },
+  "tree/ornaments/seed-orn-03": {
+    "type": "star",
+    "x": 0.5,
+    "y": 0.12,
+    "uid": "seed",
+    "nick": "함박산타",
+    "createdAt": 1794495600000
+  },
+  "tree/ornaments/seed-orn-04": {
+    "type": "bell",
+    "x": 0.36,
+    "y": 0.52,
+    "uid": "seed",
+    "nick": "함박산타",
+    "createdAt": 1794495600000
+  },
+  "tree/ornaments/seed-orn-05": {
+    "type": "candy",
+    "x": 0.64,
+    "y": 0.55,
+    "uid": "seed",
+    "nick": "함박산타",
+    "createdAt": 1794495600000
+  },
+  "tree/ornaments/seed-orn-06": {
+    "type": "ball_blue",
+    "x": 0.47,
+    "y": 0.66,
+    "uid": "seed",
+    "nick": "함박산타",
+    "createdAt": 1794495600000
+  },
+  "snowmen/seed-snowman-01": {
+    "uid": "seed",
+    "nick": "함박산타",
+    "x": 0.22,
+    "y": 0.8,
+    "parts": {
+      "hat": "beanie",
+      "scarf": "red",
+      "nose": "carrot"
+    },
+    "createdAt": 1794495600000
+  },
+  "snowmen/seed-snowman-02": {
+    "uid": "seed",
+    "nick": "함박산타",
+    "x": 0.74,
+    "y": 0.84,
+    "parts": {
+      "hat": "santa",
+      "scarf": "green",
+      "nose": "carrot"
+    },
+    "createdAt": 1794495600000
+  },
+  "gifts/seed-gift-01": {
+    "fromUid": "seed",
+    "fromNick": "함박산타",
+    "to": "anyone",
+    "letter": "메리크리에 온 걸 환영해요! 트리에 방울 하나 달고 가요.",
+    "paper": "snow",
+    "box": "red",
+    "ribbon": "gold",
+    "createdAt": 1794495600000
+  },
+  "gifts/seed-gift-02": {
+    "fromUid": "seed",
+    "fromNick": "익명",
+    "to": "anyone",
+    "letter": "따뜻한 코코아 한 잔 하고 가세요. 메리 크리스마스!",
+    "paper": "star",
+    "box": "green",
+    "ribbon": "red",
+    "createdAt": 1794495600000
+  },
+  "demo/gifts/demo-gift-01": {
+    "fromUid": "seed",
+    "fromNick": "함박산타",
+    "to": "anyone",
+    "letter": "채점용 데모 선물이에요. 12월 25일이 아니어도 바로 열 수 있어요.",
+    "paper": "snow",
+    "box": "red",
+    "ribbon": "gold",
+    "createdAt": 1794495600000
+  },
+  "demo/gifts/demo-gift-02": {
+    "fromUid": "seed",
+    "fromNick": "산타",
+    "to": "anyone",
+    "letter": "올해도 수고 많았어요. 메리 크리스마스!",
+    "paper": "star",
+    "box": "green",
+    "ribbon": "red",
+    "createdAt": 1794495600000
+  },
+  "demo/gifts/demo-gift-03": {
+    "fromUid": "seed",
+    "fromNick": "눈사람",
+    "to": "anyone",
+    "letter": "녹기 전에 꼭 다시 놀러 와요 ☃",
+    "paper": "snow",
+    "box": "navy",
+    "ribbon": "white",
+    "createdAt": 1794495600000
+  },
+  "lounge/fire": {
+    "level": 2,
+    "lastFedAt": 1794495600000
+  }
+}

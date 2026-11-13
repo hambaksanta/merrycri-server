@@ -1,0 +1,59 @@
+name: 기능 (FEAT)
+description: 새 기능이나 공간 오브젝트를 만들 때
+title: "FEAT: [담당] "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: owner
+    attributes:
+      label: 담당
+      options:
+        - A · 월드·캐릭터
+        - B · 실시간·시스템
+        - C · 공간 콘텐츠·기획
+    validations:
+      required: true
+  - type: dropdown
+    id: space
+    attributes:
+      label: 공간
+      options:
+        - 공통 (여러 공간)
+        - wardrobe 옷장
+        - plaza 광장
+        - tree 트리 광장
+        - post 선물 우체국
+        - lounge 불멍 라운지
+        - snowman 눈사람 언덕
+        - snowball 눈싸움 마당
+        - sled 썰매 언덕
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: 무엇을 만드나
+      description: 보이는 반응과 소리를 같이 적는다
+      placeholder: 장작을 탭하면 불이 한 단계 커지고, 탁탁 소리(sfx_crackle)가 난다
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: 완료 기준
+      placeholder: |
+        - [ ] AVD 두 대에서 한쪽이 장작을 넣으면 다른 쪽 불도 커진다
+        - [ ] 30초마다 한 단계씩 줄어든다
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: 쓰는 데이터 경로
+      description: 새 경로·필드가 필요하면 적고 세 명 합의 (merrycri-server 의 DATA_MODEL.md)
+      placeholder: lounge/fire { level, lastFedAt }
+  - type: input
+    id: due
+    attributes:
+      label: 목표 날짜
+      placeholder: "11/18"
