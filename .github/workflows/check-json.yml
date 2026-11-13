@@ -3,9 +3,9 @@ name: JSON 확인
 
 on:
   pull_request:
-    branches: [main]
+    branches: [dev, main]
   push:
-    branches: [main]
+    branches: [dev, main]
 
 jobs:
   json:

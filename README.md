@@ -11,7 +11,7 @@
 | **merrycri-server** (여기) | DB 보안 규칙, 데이터 구조 문서, 예시 데이터 |
 
 - 데이터 구조 (세 명 합의 필수): [docs/DATA_MODEL.md](docs/DATA_MODEL.md)
-- 협업 규칙 (브랜치·커밋·PR): 클라이언트 저장소의 [CONTRIBUTING.md](https://github.com/hambaksanta/merrycri-client/blob/main/CONTRIBUTING.md)를 똑같이 따른다
+- 협업 규칙 (브랜치·커밋·PR): 클라이언트 저장소의 [CONTRIBUTING.md](https://github.com/hambaksanta/merrycri-client/blob/dev/CONTRIBUTING.md)를 똑같이 따른다
 
 ## 폴더
 
@@ -67,5 +67,5 @@ firebase emulators:start      # 인증·DB 에뮬레이터, 브라우저에서 h
 
 ## 5. Git 규칙
 
-클라이언트와 같다. `main`에 직접 push 금지, 모든 변경은 PR + 1명 승인 → Squash and merge.
+클라이언트와 같다. 매일 작업은 `dev`(기본 브랜치)로 PR, `main`은 최종본만 (`dev` → `main`은 Create a merge commit). 둘 다 직접 push 금지, 모든 변경은 PR + 1명 승인 → Squash and merge.
 브랜치 예: `chore/4-rules-snowball`, 커밋·PR 제목 예: `CHORE: [B] 눈덩이 경로 규칙 추가`

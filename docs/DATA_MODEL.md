@@ -1,7 +1,7 @@
 # 함박산타 - 프로젝트 메리크리 · Firebase 데이터 구조
 
-- 기준: [AI 공통 프롬프트](https://github.com/hambaksanta/merrycri-client/blob/main/docs/AI_PROMPT.md)의 'Realtime Database 구조'
-- 클라이언트 코드: [`data/model/Models.kt`](https://github.com/hambaksanta/merrycri-client/blob/main/app/src/main/java/com/hambaksanta/merrycri/data/model/Models.kt) (경로 상수는 `DbPath`)
+- 기준: [AI 공통 프롬프트](https://github.com/hambaksanta/merrycri-client/blob/dev/docs/AI_PROMPT.md)의 'Realtime Database 구조'
+- 클라이언트 코드: [`data/model/Models.kt`](https://github.com/hambaksanta/merrycri-client/blob/dev/app/src/main/java/com/hambaksanta/merrycri/data/model/Models.kt) (경로 상수는 `DbPath`)
 - 보안 규칙: [`database.rules.json`](../database.rules.json)
 - 바꾸려면 세 명 합의 → 이 문서, 규칙, `Models.kt`를 같이 고친다 (두 저장소 PR).
 
