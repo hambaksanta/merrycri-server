@@ -19,6 +19,7 @@
       }
     }
   },
+  "online": { "{uid}": true },
   "rooms": {
     "{spaceId}": {
       "presence": {
@@ -51,6 +52,7 @@
 | 노드 | 언제 쓰나 | 지켜야 할 것 |
 | --- | --- | --- |
 | `users/{uid}` | 옷장에서 '마을로 가기' | nick 1~10자. 내 것만 쓰기 |
+| `online/{uid}` | 익명 로그인 후 마을 입장·재연결할 때 | 전체 접속자 10명 제한에 사용. 내 uid만 `true`로 쓰고 `onDisconnect().removeValue()`를 등록 |
 | `rooms/{spaceId}/presence/{uid}` | 공간 입장·나가기, 걷기 시작, holding 바뀔 때 | spaceId는 `wardrobe` `plaza` `tree` `post` `lounge` `snowman` `snowball` `sled`만. 입장 직후 `onDisconnect().removeValue()` 필수. 같은 공간만 구독 |
 | ㄴ 위치 | 바닥 탭 = 걷기 시작 때 한 번 | 출발점 `x,y`·목적지 `tx,ty`·출발 시각 `moveStartAt`만 보낸다. 지금 위치는 각 폰이 계산 (클라이언트 `core/scene/Movement.kt`, 속도 화면 30%/초). 걷는 동안 연속 전송 금지. 좌표는 0~1 |
 | ㄴ `holding` | 간식 집기·내려놓기 | `null` `cocoa` `latte` `americano` `gingerbread` `chocolate` `marshmallow`. `bites` = 먹은 입 수, `roasted` = 마시멜로 구웠는지 |
