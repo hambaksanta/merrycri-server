@@ -12,6 +12,14 @@
       }
     },
 
+    "online": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "!newData.exists() || newData.val() === true"
+      }
+    },
+
     "rooms": {
       "$spaceId": {
         ".validate": "$spaceId.matches(/^(wardrobe|plaza|tree|post|lounge|snowman|snowball|sled)$/)",
