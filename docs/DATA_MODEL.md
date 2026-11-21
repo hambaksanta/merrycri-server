@@ -1,73 +1,117 @@
-# 함박산타 - 프로젝트 메리크리 · Firebase 데이터 구조
+# 함박산타 - 프로젝트 메리크리 · v2 Firebase 데이터 구조
 
-- 기준: [AI 공통 프롬프트](https://github.com/hambaksanta/merrycri-client/blob/dev/docs/AI_PROMPT.md)의 'Realtime Database 구조'
-- 클라이언트 코드: [`data/model/Models.kt`](https://github.com/hambaksanta/merrycri-client/blob/dev/app/src/main/java/com/hambaksanta/merrycri/data/model/Models.kt) (경로 상수는 `DbPath`)
+- 기준: 클라이언트 저장소 `docs/AI_PROMPT.md`의 v2 Realtime Database 구조
 - 보안 규칙: [`database.rules.json`](../database.rules.json)
-- 바꾸려면 세 명 합의 → 이 문서, 규칙, `Models.kt`를 같이 고친다 (두 저장소 PR).
+- 예시 데이터: [`seed/seed.json`](../seed/seed.json)
+- 클라이언트 모델을 바꿀 때는 이 문서와 `data/model/`을 세 명이 합의한 뒤 함께 수정한다.
 
-서버는 Firebase Realtime Database + 익명 로그인만 쓴다. **Cloud Functions 없음, 무료(Spark) 요금제.**
-시간은 전부 서버 시간(ms). 쓸 때는 `ServerValue.TIMESTAMP`, 읽을 때는 `.info/serverTimeOffset`으로 보정한다.
+서버는 Firebase Authentication의 익명 로그인과 Realtime Database만 사용한다. Cloud Functions와 FCM은 사용하지 않는다.
+시간 값은 밀리초이며 쓰기는 `ServerValue.TIMESTAMP`, 읽기는 `.info/serverTimeOffset`으로 보정한다.
+
+## 전체 구조
 
 ```json
 {
   "users": {
     "{uid}": {
-      "nick": "수민",
-      "outfit": {
-        "hat": "beanie", "scarf": "stripe", "gloves": "mitten", "top": "sweater", "boots": "fur",
-        "colors": { "hat": "red", "scarf": "green", "gloves": "white", "top": "red", "boots": "brown" }
+      "nickname": "눈송이",
+      "friendCode": "MERRY1",
+      "createdAt": 0
+    }
+  },
+  "friendCodes": {
+    "MERRY1": "{uid}"
+  },
+  "friends": {
+    "{uid}": {
+      "{friendUid}": 0
+    }
+  },
+  "ornaments": {
+    "{ownerUid}": {
+      "{writerUid}": {
+        "type": "bauble",
+        "slot": 0,
+        "createdAt": 0
       }
     }
   },
-  "rooms": {
-    "{spaceId}": {
-      "presence": {
-        "{uid}": {
-          "nick": "수민", "outfit": { },
-          "x": 0.42, "y": 0.71, "tx": 0.60, "ty": 0.80, "moveStartAt": 0,
-          "holding": "marshmallow", "bites": 1, "roasted": true,
-          "updatedAt": 0
-        }
+  "letters": {
+    "{ownerUid}": {
+      "{writerUid}": {
+        "nickname": "눈송이",
+        "text": "메리 크리스마스!",
+        "createdAt": 0
       }
     }
   },
-  "events": { "snowstorm": { "by": "{uid}", "at": 0 } },
-  "tree": { "ornaments": { "{id}": { "type": "ball_red", "x": 0.55, "y": 0.38, "uid": "...", "nick": "수민", "createdAt": 0 } } },
-  "gifts": {
-    "{giftId}": {
-      "fromUid": "...", "fromNick": "수민", "to": "{uid 또는 anyone}",
-      "letter": "메리 크리스마스!", "paper": "snow", "box": "red", "ribbon": "gold",
-      "createdAt": 0, "openedBy": null, "openedAt": null
+  "scores": {
+    "{ownerUid}": {
+      "{writerUid}": {
+        "nickname": "눈송이",
+        "best": 120,
+        "updatedAt": 0
+      }
     }
   },
-  "demo": { "gifts": { "{giftId}": { "...": "gifts 와 같은 구조" } } },
-  "lounge": { "fire": { "level": 2, "lastFedAt": 0 } },
-  "snowmen": { "{id}": { "uid": "...", "nick": "수민", "x": 0.2, "y": 0.8, "parts": { }, "createdAt": 0 } }
+  "config": {
+    "openAt": 1798124400000
+  }
 }
 ```
 
-## 노드별 규칙
+`config/openAt`의 예시 값 `1798124400000`은 2026-12-25 00:00 KST다.
 
-| 노드 | 언제 쓰나 | 지켜야 할 것 |
-| --- | --- | --- |
-| `users/{uid}` | 옷장에서 '마을로 가기' | nick 1~10자. 내 것만 쓰기 |
-| `rooms/{spaceId}/presence/{uid}` | 공간 입장·나가기, 걷기 시작, holding 바뀔 때 | spaceId는 `wardrobe` `plaza` `tree` `post` `lounge` `snowman` `snowball` `sled`만. 입장 직후 `onDisconnect().removeValue()` 필수. 같은 공간만 구독 |
-| ㄴ 위치 | 바닥 탭 = 걷기 시작 때 한 번 | 출발점 `x,y`·목적지 `tx,ty`·출발 시각 `moveStartAt`만 보낸다. 지금 위치는 각 폰이 계산 (클라이언트 `core/scene/Movement.kt`, 속도 화면 30%/초). 걷는 동안 연속 전송 금지. 좌표는 0~1 |
-| ㄴ `holding` | 간식 집기·내려놓기 | `null` `cocoa` `latte` `americano` `gingerbread` `chocolate` `marshmallow`. `bites` = 먹은 입 수, `roasted` = 마시멜로 구웠는지 |
-| `events/snowstorm` | 흔들기 감지(디버그 버튼) | `by` = 내 uid, `at` = 서버 시간. `at`이 10초 넘게 지난 이벤트는 무시 |
-| `tree/ornaments/{id}` | 오너먼트 달 때 push | 추가만 가능, 수정·삭제 불가. `createdAt` = 서버 시간 |
-| `gifts/{giftId}` | 포장하기 때 push, 열 때 `openedBy`·`openedAt` | `to` = 받는 uid 또는 `anyone`. 열기는 **KST 12/25 00:00 ~ 12/31 23:59 서버 시간**에만, 받는 사람(또는 `anyone`이면 아무나)만, 아직 안 열린 것만 (규칙이 막음). `anyone` 선물은 `runTransaction`으로 먼저 연 한 명만. 편지 500자 |
-| `demo/gifts/{giftId}` | 채점·시연용 | gifts와 같은 구조. 잠금 없이 언제든 열람. 설정의 데모 모드에서 이 경로를 읽는다 |
-| `lounge/fire` | 장작 넣을 때 `runTransaction` | `level` 0~3. 줄어드는 것은 DB에 쓰지 않고 계산: **현재 단계 = level − (지금 − lastFedAt) ÷ 30초, 최소 0** (`FireState.currentLevel`) |
-| `snowmen/{id}` | 세우기 때 push | **1인 최대 3개** (만들기 전에 `orderByChild("uid")`로 내 개수를 세서 막는다). 내 것만 수정·삭제 |
+## 경로별 규칙
 
-## 아직 정하지 않은 것
+| 경로 | 용도 | 읽기 | 쓰기 |
+| --- | --- | --- | --- |
+| `users/{uid}` | 닉네임·친구 코드 | 로그인 사용자 | 본인만. `friendCode`, `createdAt`은 생성 후 변경 불가 |
+| `friendCodes/{code}` | 6자리 코드로 uid 찾기 | 로그인 사용자 | 코드 주인만 최초 1회 |
+| `friends/{uid}/{friendUid}` | 친구가 된 서버 시각 | 본인의 친구 목록만 | 두 사용자 중 한 명이 최초 1회 |
+| `ornaments/{ownerUid}/{writerUid}` | 트리에 달린 장식 | 로그인 사용자 | 친구인 작성자 본인이 1회 |
+| `letters/{ownerUid}/{writerUid}` | 비공개 편지 | 주인이며 `now >= config/openAt`일 때만 | 친구인 작성자 본인이 1회, 1~300자 |
+| `scores/{ownerUid}/{writerUid}` | 해당 트리의 벽돌깨기 최고점 | 로그인 사용자 | 그 트리에 편지를 쓴 작성자만, 기존 최고점보다 높을 때 |
+| `config/openAt` | 편지 공개 시각 | 로그인 사용자 | 앱에서는 쓰기 불가. 발표 시 Firebase 콘솔에서 변경 |
 
-- `snowmen/{id}/parts` 안의 키: A가 정해서 합의 (예시 데이터는 `hat` `scarf` `nose`로 넣어 둠)
-- 눈싸움 마당의 눈덩이 데이터: 공통 프롬프트에 없음. B가 설계해서 합의한 뒤 이 문서와 규칙에 추가 (지금은 규칙상 쓰기 불가)
-- 오너먼트 `type`, 선물 `paper` `box` `ribbon` 값 목록: C가 정해서 여기에 적기
+## 클라이언트 구현 약속
 
-## 알아둘 점
+### 회원 생성과 친구 코드
 
-- 편지 내용은 로그인한 사람이면 기술적으로 읽을 수 있다 (12/25 전 잠금은 앱 화면에서 처리). 열기(`openedBy`)만 규칙이 기간을 막는다.
-- 값은 전부 소문자 id 문자열로 저장한다 (`beanie`, `cocoa`, `plaza`). id를 바꾸면 이미 저장된 데이터가 깨진다.
+1. 익명 로그인으로 `uid`를 얻는다.
+2. 중복되지 않은 6자리 코드를 만든다.
+3. `users/{uid}`를 먼저 저장한다.
+4. `friendCodes/{code}`를 최초 1회 저장한다. 이미 존재하면 다른 코드를 생성한다.
+
+### 친구 추가
+
+코드로 `friendUid`를 찾은 뒤 다음 두 경로를 `updateChildren()`으로 한 번에 저장한다.
+
+```text
+friends/{uid}/{friendUid}: ServerValue.TIMESTAMP
+friends/{friendUid}/{uid}: ServerValue.TIMESTAMP
+```
+
+### 장식과 편지
+
+- 장식 타입: `bauble`, `star`, `cane`, `snow`, `gift`, `bell`
+- 장식 슬롯: `0..14`
+- 작성자 uid가 키이므로 같은 트리에 두 번째 장식이나 편지를 만들 수 없다.
+- 받은 편지 수는 `ornaments/{ownerUid}`의 자식 개수다.
+- 트리 단계 기준은 클라이언트 상수 한 곳에서 관리한다: `0`, `1~2`, `3~5`, `6~9`, `10+`.
+
+### 편지 열람
+
+- 주인 외 사용자는 날짜와 관계없이 편지 내용을 읽을 수 없다.
+- 주인도 서버 시간 `now`가 `config/openAt`보다 빠르면 읽을 수 없다.
+- 앱의 디버그 시연은 `config/openAt`을 Firebase 콘솔에서 현재보다 과거로 바꿔 확인한다.
+
+### 점수
+
+- `letters/{ownerUid}/{writerUid}`가 있는 작성자만 해당 트리 점수를 저장할 수 있다.
+- `best`가 기존 값보다 클 때만 갱신된다.
+- 리더보드는 `scores/{ownerUid}`를 `orderByChild("best")`로 조회한다.
+
+## 공개 함수 변경 시 주의
+
+클라이언트 `MerryRepository`의 공개 함수와 `data/model/` 타입은 A·C가 함께 사용한다. 이름이나 반환형을 바꾸기 전에 팀에 변경점을 공유한다.
