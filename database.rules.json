@@ -26,8 +26,8 @@
     "friendCodes": {
       ".read": "auth != null",
       "$code": {
-        ".write": "auth != null && $code.length === 6 && !data.exists() && newData.val() === auth.uid && root.child('users').child(auth.uid).child('friendCode').val() === $code",
-        ".validate": "newData.isString() && newData.val() === auth.uid"
+        ".write": "auth != null && $code.length === 6 && ((!data.exists() && newData.val() === auth.uid) || (data.val() === auth.uid && !newData.exists()))",
+        ".validate": "!newData.exists() || (newData.isString() && newData.val() === auth.uid)"
       }
     },
 

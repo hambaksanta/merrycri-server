@@ -52,6 +52,17 @@ test("작성자는 openAt 이후에도 주인의 편지를 읽을 수 없다", a
   await assertFails(get(ref(writerDb, `letters/${OWNER_UID}`)));
 });
 
+test("6자리 친구 코드는 본인만 선점하고 중복 사용할 수 없다", async () => {
+  const ownerDb = testEnv.authenticatedContext(OWNER_UID).database();
+  const writerDb = testEnv.authenticatedContext(WRITER_UID).database();
+  const codePath = "friendCodes/ABC123";
+
+  await assertSucceeds(set(ref(ownerDb, codePath), OWNER_UID));
+  await assertFails(set(ref(writerDb, codePath), WRITER_UID));
+  await assertFails(set(ref(writerDb, "friendCodes/WRONG1"), OWNER_UID));
+  await assertSucceeds(set(ref(ownerDb, codePath), null));
+});
+
 test("장식과 편지는 한 트리에 한 번만 작성할 수 있다", async () => {
   await testEnv.withSecurityRulesDisabled(async (context) => {
     const adminDb = context.database();
