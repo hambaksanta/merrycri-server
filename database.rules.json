@@ -65,20 +65,29 @@
     },
 
     "letters": {
-      "$ownerUid": {
-        ".read": "auth != null && auth.uid === $ownerUid && root.child('config').child('openAt').isNumber() && now >= root.child('config').child('openAt').val()",
+      "$recipientUid": {
+        ".read": "auth != null && auth.uid === $recipientUid && root.child('config').child('openAt').isNumber() && now >= root.child('config').child('openAt').val()",
         ".indexOn": ["createdAt"],
-        "$writerUid": {
-          ".write": "auth != null && auth.uid === $writerUid && $ownerUid !== $writerUid && !data.exists() && newData.exists() && root.child('friends').child($ownerUid).child($writerUid).exists()",
-          ".validate": "newData.hasChildren(['nickname', 'text', 'createdAt'])",
-          "nickname": {
-            ".validate": "newData.isString() && newData.val().length >= 1"
+        "$letterId": {
+          ".write": "auth != null && ((!data.exists() && auth.uid !== $recipientUid && newData.child('senderUid').val() === auth.uid && root.child('friends').child($recipientUid).child(auth.uid).exists() && !root.child('ornaments').child($recipientUid).child(auth.uid).exists()) || (data.exists() && auth.uid === $recipientUid && root.child('config').child('openAt').isNumber() && now >= root.child('config').child('openAt').val()))",
+          ".validate": "newData.hasChildren(['senderUid', 'senderNickname', 'content', 'ornamentType', 'createdAt', 'opened'])",
+          "senderUid": {
+            ".validate": "newData.isString() && ((!data.exists() && newData.val() === auth.uid) || (data.exists() && newData.val() === data.val()))"
           },
-          "text": {
-            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 300"
+          "senderNickname": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && ((!data.exists() && newData.val() === root.child('users').child(auth.uid).child('nickname').val()) || (data.exists() && newData.val() === data.val()))"
+          },
+          "content": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 300 && (!data.exists() || newData.val() === data.val())"
+          },
+          "ornamentType": {
+            ".validate": "newData.isString() && newData.val().matches(/^(bauble|star|cane|snow|gift|bell)$/) && (!data.exists() || newData.val() === data.val())"
           },
           "createdAt": {
-            ".validate": "newData.isNumber() && newData.val() === now"
+            ".validate": "newData.isNumber() && ((!data.exists() && newData.val() === now) || (data.exists() && newData.val() === data.val()))"
+          },
+          "opened": {
+            ".validate": "newData.isBoolean() && ((!data.exists() && newData.val() === false) || (data.exists() && data.val() === false && newData.val() === true))"
           },
           "$other": {
             ".validate": false
@@ -92,7 +101,7 @@
         ".read": "auth != null",
         ".indexOn": ["best"],
         "$writerUid": {
-          ".write": "auth != null && auth.uid === $writerUid && root.child('letters').child($ownerUid).child($writerUid).exists() && (!data.exists() || newData.child('best').val() > data.child('best').val())",
+          ".write": "auth != null && auth.uid === $writerUid && root.child('ornaments').child($ownerUid).child($writerUid).exists() && (!data.exists() || newData.child('best').val() > data.child('best').val())",
           ".validate": "newData.hasChildren(['nickname', 'best', 'updatedAt'])",
           "nickname": {
             ".validate": "newData.isString() && newData.val().length >= 1"

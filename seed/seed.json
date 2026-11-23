@@ -19,10 +19,13 @@
     "slot": 0,
     "createdAt": 1794495600000
   },
-  "letters/demo-owner/demo-writer": {
-    "nickname": "눈송이",
-    "text": "메리 크리스마스! 올해도 따뜻하게 보내요.",
-    "createdAt": 1794495600000
+  "letters/demo-owner/demo-letter-01": {
+    "senderUid": "demo-writer",
+    "senderNickname": "눈송이",
+    "content": "메리 크리스마스! 올해도 따뜻하게 보내요.",
+    "ornamentType": "bauble",
+    "createdAt": 1794495600000,
+    "opened": false
   },
   "scores/demo-owner/demo-writer": {
     "nickname": "눈송이",

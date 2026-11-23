@@ -7,7 +7,7 @@ import {
   assertSucceeds,
   initializeTestEnvironment,
 } from "@firebase/rules-unit-testing";
-import { get, ref, serverTimestamp, set } from "firebase/database";
+import { get, ref, serverTimestamp, set, update } from "firebase/database";
 
 const PROJECT_ID = "hambaksanta-merrycri";
 const OWNER_UID = "owner";
@@ -43,7 +43,7 @@ test("주인은 openAt 이후 편지를 읽을 수 있다", async () => {
   await setOpenAt(Date.now() - 1_000);
   const ownerDb = testEnv.authenticatedContext(OWNER_UID).database();
   const snapshot = await assertSucceeds(get(ref(ownerDb, `letters/${OWNER_UID}`)));
-  assert.equal(snapshot.child(WRITER_UID).child("text").val(), "메리 크리스마스!");
+  assert.equal(snapshot.child("letter-01").child("content").val(), "메리 크리스마스!");
 });
 
 test("작성자는 openAt 이후에도 주인의 편지를 읽을 수 없다", async () => {
@@ -63,38 +63,49 @@ test("6자리 친구 코드는 본인만 선점하고 중복 사용할 수 없�
   await assertSucceeds(set(ref(ownerDb, codePath), null));
 });
 
-test("장식과 편지는 한 트리에 한 번만 작성할 수 있다", async () => {
+test("장식과 편지는 한 번에 저장되고 같은 발신자는 두 번 쓸 수 없다", async () => {
   await testEnv.withSecurityRulesDisabled(async (context) => {
     const adminDb = context.database();
     await set(ref(adminDb, `ornaments/${OWNER_UID}/${WRITER_UID}`), null);
-    await set(ref(adminDb, `letters/${OWNER_UID}/${WRITER_UID}`), null);
+    await set(ref(adminDb, `letters/${OWNER_UID}`), null);
   });
 
   const writerDb = testEnv.authenticatedContext(WRITER_UID).database();
-  const ornamentRef = ref(writerDb, `ornaments/${OWNER_UID}/${WRITER_UID}`);
-  const letterRef = ref(writerDb, `letters/${OWNER_UID}/${WRITER_UID}`);
+  await assertSucceeds(update(ref(writerDb), {
+    [`ornaments/${OWNER_UID}/${WRITER_UID}`]: {
+      type: "bauble",
+      slot: 0,
+      createdAt: serverTimestamp(),
+    },
+    [`letters/${OWNER_UID}/letter-new-01`]: {
+      senderUid: WRITER_UID,
+      senderNickname: "눈송이",
+      content: "첫 편지",
+      ornamentType: "bauble",
+      createdAt: serverTimestamp(),
+      opened: false,
+    },
+  }));
 
-  await assertSucceeds(set(ornamentRef, {
-    type: "bauble",
-    slot: 0,
+  await assertFails(set(ref(writerDb, `letters/${OWNER_UID}/letter-new-02`), {
+    senderUid: WRITER_UID,
+    senderNickname: "눈송이",
+    content: "두 번째 편지",
+    ornamentType: "star",
     createdAt: serverTimestamp(),
+    opened: false,
   }));
-  await assertSucceeds(set(letterRef, {
-    nickname: "눈송이",
-    text: "첫 편지",
-    createdAt: serverTimestamp(),
-  }));
+});
 
-  await assertFails(set(ornamentRef, {
-    type: "star",
-    slot: 1,
-    createdAt: serverTimestamp(),
-  }));
-  await assertFails(set(letterRef, {
-    nickname: "눈송이",
-    text: "두 번째 편지",
-    createdAt: serverTimestamp(),
-  }));
+test("공개일 이후 수신자만 opened를 false에서 true로 바꿀 수 있다", async () => {
+  await setOpenAt(Date.now() - 1_000);
+  const ownerDb = testEnv.authenticatedContext(OWNER_UID).database();
+  const writerDb = testEnv.authenticatedContext(WRITER_UID).database();
+  const openedPath = `letters/${OWNER_UID}/letter-01/opened`;
+
+  await assertFails(set(ref(writerDb, openedPath), true));
+  await assertSucceeds(set(ref(ownerDb, openedPath), true));
+  await assertFails(set(ref(ownerDb, openedPath), false));
 });
 
 test("편지 작성자만 더 높은 최고점을 저장할 수 있다", async () => {
@@ -159,10 +170,13 @@ async function seedBaseData(openAt) {
       },
       letters: {
         [OWNER_UID]: {
-          [WRITER_UID]: {
-            nickname: "눈송이",
-            text: "메리 크리스마스!",
+          "letter-01": {
+            senderUid: WRITER_UID,
+            senderNickname: "눈송이",
+            content: "메리 크리스마스!",
+            ornamentType: "bauble",
             createdAt: Date.now(),
+            opened: false,
           },
         },
       },
