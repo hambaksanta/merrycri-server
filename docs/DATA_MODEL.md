@@ -37,11 +37,14 @@
     }
   },
   "letters": {
-    "{ownerUid}": {
-      "{writerUid}": {
-        "nickname": "눈송이",
-        "text": "메리 크리스마스!",
-        "createdAt": 0
+    "{recipientUid}": {
+      "{letterId}": {
+        "senderUid": "{uid}",
+        "senderNickname": "눈송이",
+        "content": "메리 크리스마스!",
+        "ornamentType": "bauble",
+        "createdAt": 0,
+        "opened": false
       }
     }
   },
@@ -70,7 +73,7 @@
 | `friendCodes/{code}` | 6자리 코드로 uid 찾기 | 로그인 사용자 | 빈 코드는 본인이 선점, 생성 실패 시 본인 예약만 삭제 |
 | `friends/{uid}/{friendUid}` | 친구가 된 서버 시각 | 본인의 친구 목록만 | 두 사용자 중 한 명이 최초 1회 |
 | `ornaments/{ownerUid}/{writerUid}` | 트리에 달린 장식 | 로그인 사용자 | 친구인 작성자 본인이 1회 |
-| `letters/{ownerUid}/{writerUid}` | 비공개 편지 | 주인이며 `now >= config/openAt`일 때만 | 친구인 작성자 본인이 1회, 1~300자 |
+| `letters/{recipientUid}/{letterId}` | 비공개 편지 | 수신자이며 `now >= config/openAt`일 때만 | 친구인 발신자 본인이 1회, 1~300자. 공개 후 수신자는 `opened`만 변경 |
 | `scores/{ownerUid}/{writerUid}` | 해당 트리의 벽돌깨기 최고점 | 로그인 사용자 | 그 트리에 편지를 쓴 작성자만, 기존 최고점보다 높을 때 |
 | `config/openAt` | 편지 공개 시각 | 로그인 사용자 | 앱에서는 쓰기 불가. 발표 시 Firebase 콘솔에서 변경 |
 
@@ -96,7 +99,10 @@ friends/{friendUid}/{uid}: ServerValue.TIMESTAMP
 
 - 장식 타입: `bauble`, `star`, `cane`, `snow`, `gift`, `bell`
 - 장식 슬롯: `0..14`
-- 작성자 uid가 키이므로 같은 트리에 두 번째 장식이나 편지를 만들 수 없다.
+- 편지는 `push()`로 만든 `letterId`를 키로 저장한다.
+- 편지에는 `senderUid`, `senderNickname`, `content`, `ornamentType`, `createdAt`, `opened`를 저장한다.
+- 편지와 `ornaments/{recipientUid}/{senderUid}`를 다중 경로 업데이트로 함께 저장한다.
+- 장식의 작성자 uid가 키이므로 같은 사용자는 한 트리에 한 번만 편지를 보낼 수 있다.
 - 받은 편지 수는 `ornaments/{ownerUid}`의 자식 개수다.
 - 트리 단계 기준은 클라이언트 상수 한 곳에서 관리한다: `0`, `1~2`, `3~5`, `6~9`, `10+`.
 
@@ -108,7 +114,7 @@ friends/{friendUid}/{uid}: ServerValue.TIMESTAMP
 
 ### 점수
 
-- `letters/{ownerUid}/{writerUid}`가 있는 작성자만 해당 트리 점수를 저장할 수 있다.
+- `ornaments/{ownerUid}/{writerUid}`가 있는 작성자만 해당 트리 점수를 저장할 수 있다.
 - `best`가 기존 값보다 클 때만 갱신된다.
 - 리더보드는 `scores/{ownerUid}`를 `orderByChild("best")`로 조회한다.
 
