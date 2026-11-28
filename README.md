@@ -44,7 +44,7 @@ firebase deploy --only database                # 보안 규칙 배포
 firebase database:update / seed/seed.json      # 예시 데이터 넣기
 ```
 
-- `seed.json`은 `tree/ornaments/seed-orn-01`처럼 **경로를 키로** 적어 두어서, 넣어도 사람들이 만든 데이터는 지워지지 않는다 (같은 키만 덮어씀).
+- `seed.json`은 `letters/demo-owner/demo-letter-01`처럼 **경로를 키로** 적어 둔다. 업데이트하면 해당 키만 덮어쓰고 `config/openAt`은 건드리지 않는다.
 - CLI가 어려우면 콘솔에서 해도 된다. 규칙은 **Realtime Database → 규칙** 탭에 `database.rules.json` 내용을 붙여넣고 게시한다.
 - 콘솔의 'JSON 가져오기'는 **선택한 위치의 데이터를 통째로 바꾸므로** 쓰지 않는다.
 - '테스트 모드'로 DB를 만들면 규칙에 만료일(약 30일)이 들어가니, 반드시 이 저장소의 규칙으로 바꿔 둔다.
@@ -57,6 +57,19 @@ firebase database:update / seed/seed.json      # 예시 데이터 넣기
 ```bash
 firebase emulators:start      # 인증·DB 에뮬레이터, 브라우저에서 http://localhost:4000
 ```
+
+### 시연 데이터
+
+- 예시 프로필은 함박산타, 눈송이, 루돌프 세 개다. 함박산타 트리에는 편지 10통과 대응하는 장식 10개가 있어 Lv5가 된다. 장식은 발신자당 하나이므로, 다른 두 프로필의 편지 외 8통은 과거의 가상 발신자 기록으로 넣는다.
+- 기본 seed의 `demo-*` UID는 DB용 예시 ID다. 실제 앱으로 시연하려면 별도 테스트 프로젝트에서 세 기기 또는 앱 인스턴스를 먼저 익명 로그인·온보딩시키고 Authentication에서 세 UID를 확인한다. 가능하면 위 닉네임을 그대로 사용한다.
+- 아래 순서로 실제 UID를 연결해 JSON 하나를 만든 후 DB에 한 번 적용한다. 기존 시연 계정의 프로필과 친구 코드는 유지되며, 같은 경로의 기존 내용은 덮어쓰므로 전용 계정과 테스트 프로젝트를 사용한다.
+
+```bash
+node seed/bind-demo-uids.mjs OWNER_UID WRITER_UID GUEST_UID > /tmp/merrycri-demo-seed.json
+firebase database:update / /tmp/merrycri-demo-seed.json --project TEST_PROJECT_ID
+```
+
+- 함박산타 기기의 내 트리에서 Lv5와 장식 10개를 확인한다. 편지 본문까지 시연하려면 테스트 DB에서만 `config/openAt`을 현재보다 과거의 밀리초 값으로 설정하고, 시연 뒤 기존 값으로 되돌린다.
 
 ## 4. 데이터 구조를 바꿀 때
 
