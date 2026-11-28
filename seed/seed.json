@@ -1,35 +1,166 @@
 {
-  "config/openAt": 1798124400000,
   "users/demo-owner": {
     "nickname": "함박산타",
     "friendCode": "MERRY1",
     "createdAt": 1794495600000
   },
+  "friendCodes/MERRY1": "demo-owner",
+  "friends/demo-owner/demo-writer": 1794495600000,
+  "friends/demo-owner/demo-guest": 1794495600000,
   "users/demo-writer": {
     "nickname": "눈송이",
     "friendCode": "SANTA1",
     "createdAt": 1794495600000
   },
-  "friendCodes/MERRY1": "demo-owner",
   "friendCodes/SANTA1": "demo-writer",
-  "friends/demo-owner/demo-writer": 1794495600000,
   "friends/demo-writer/demo-owner": 1794495600000,
+  "friends/demo-writer/demo-guest": 1794495600000,
+  "users/demo-guest": {
+    "nickname": "루돌프",
+    "friendCode": "RUDOLF",
+    "createdAt": 1794495600000
+  },
+  "friendCodes/RUDOLF": "demo-guest",
+  "friends/demo-guest/demo-owner": 1794495600000,
+  "friends/demo-guest/demo-writer": 1794495600000,
   "ornaments/demo-owner/demo-writer": {
     "type": "bauble",
     "slot": 0,
-    "createdAt": 1794495600000
+    "createdAt": 1794495660000
   },
   "letters/demo-owner/demo-letter-01": {
     "senderUid": "demo-writer",
     "senderNickname": "눈송이",
-    "content": "메리 크리스마스! 올해도 따뜻하게 보내요.",
+    "content": "올해도 따뜻하게 보내요. 메리 크리스마스!",
     "ornamentType": "bauble",
-    "createdAt": 1794495600000,
+    "createdAt": 1794495660000,
+    "opened": false
+  },
+  "ornaments/demo-owner/demo-guest": {
+    "type": "star",
+    "slot": 1,
+    "createdAt": 1794495720000
+  },
+  "letters/demo-owner/demo-letter-02": {
+    "senderUid": "demo-guest",
+    "senderNickname": "루돌프",
+    "content": "트리 꼭대기까지 반짝이길!",
+    "ornamentType": "star",
+    "createdAt": 1794495720000,
+    "opened": false
+  },
+  "ornaments/demo-owner/demo-history-03": {
+    "type": "cane",
+    "slot": 2,
+    "createdAt": 1794495780000
+  },
+  "letters/demo-owner/demo-letter-03": {
+    "senderUid": "demo-history-03",
+    "senderNickname": "별빛",
+    "content": "눈 오는 날 따뜻한 코코아 한 잔 어때요?",
+    "ornamentType": "cane",
+    "createdAt": 1794495780000,
+    "opened": false
+  },
+  "ornaments/demo-owner/demo-history-04": {
+    "type": "snow",
+    "slot": 3,
+    "createdAt": 1794495840000
+  },
+  "letters/demo-owner/demo-letter-04": {
+    "senderUid": "demo-history-04",
+    "senderNickname": "코코아",
+    "content": "함께한 시간 덕분에 올해가 더 즐거웠어요.",
+    "ornamentType": "snow",
+    "createdAt": 1794495840000,
+    "opened": false
+  },
+  "ornaments/demo-owner/demo-history-05": {
+    "type": "gift",
+    "slot": 4,
+    "createdAt": 1794495900000
+  },
+  "letters/demo-owner/demo-letter-05": {
+    "senderUid": "demo-history-05",
+    "senderNickname": "겨울바람",
+    "content": "새해에는 좋은 일이 가득하길 바라요.",
+    "ornamentType": "gift",
+    "createdAt": 1794495900000,
+    "opened": false
+  },
+  "ornaments/demo-owner/demo-history-06": {
+    "type": "bell",
+    "slot": 5,
+    "createdAt": 1794495960000
+  },
+  "letters/demo-owner/demo-letter-06": {
+    "senderUid": "demo-history-06",
+    "senderNickname": "솔방울",
+    "content": "오늘도 웃을 일이 하나쯤 있길!",
+    "ornamentType": "bell",
+    "createdAt": 1794495960000,
+    "opened": false
+  },
+  "ornaments/demo-owner/demo-history-07": {
+    "type": "bauble",
+    "slot": 6,
+    "createdAt": 1794496020000
+  },
+  "letters/demo-owner/demo-letter-07": {
+    "senderUid": "demo-history-07",
+    "senderNickname": "종소리",
+    "content": "트리 구경하고 따뜻한 인사 남겨요.",
+    "ornamentType": "bauble",
+    "createdAt": 1794496020000,
+    "opened": false
+  },
+  "ornaments/demo-owner/demo-history-08": {
+    "type": "cane",
+    "slot": 7,
+    "createdAt": 1794496080000
+  },
+  "letters/demo-owner/demo-letter-08": {
+    "senderUid": "demo-history-08",
+    "senderNickname": "진저",
+    "content": "쉬어 가도 괜찮아요. 포근한 연말 보내세요.",
+    "ornamentType": "cane",
+    "createdAt": 1794496080000,
+    "opened": false
+  },
+  "ornaments/demo-owner/demo-history-09": {
+    "type": "gift",
+    "slot": 8,
+    "createdAt": 1794496140000
+  },
+  "letters/demo-owner/demo-letter-09": {
+    "senderUid": "demo-history-09",
+    "senderNickname": "오로라",
+    "content": "내년에도 눈 오는 날 함께 걸어요.",
+    "ornamentType": "gift",
+    "createdAt": 1794496140000,
+    "opened": false
+  },
+  "ornaments/demo-owner/demo-history-10": {
+    "type": "star",
+    "slot": 9,
+    "createdAt": 1794496200000
+  },
+  "letters/demo-owner/demo-letter-10": {
+    "senderUid": "demo-history-10",
+    "senderNickname": "산타모자",
+    "content": "마지막 장식은 반짝이는 별로 골랐어요.",
+    "ornamentType": "star",
+    "createdAt": 1794496200000,
     "opened": false
   },
   "scores/demo-owner/demo-writer": {
     "nickname": "눈송이",
     "best": 120,
-    "updatedAt": 1794495600000
+    "updatedAt": 1794496260000
+  },
+  "scores/demo-owner/demo-guest": {
+    "nickname": "루돌프",
+    "best": 90,
+    "updatedAt": 1794496320000
   }
 }
